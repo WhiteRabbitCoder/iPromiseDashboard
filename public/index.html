@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iPromise Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Hooks -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar glass-panel">
+            <div class="logo">
+                <i class="fa-solid fa-cube"></i>
+                <h2>iPromise</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active" data-view="dashboard">
+                    <i class="fa-solid fa-chart-pie"></i> Dashboard
+                </a>
+                <a href="#" class="nav-link" data-view="coders">
+                    <i class="fa-solid fa-users"></i> Coders
+                </a>
+                <a href="#" class="nav-link" data-view="clientes">
+                    <i class="fa-solid fa-briefcase"></i> Clientes
+                </a>
+                <a href="#" class="nav-link" data-view="eventos">
+                    <i class="fa-solid fa-calendar-days"></i> Eventos
+                </a>
+                <a href="#" class="nav-link" data-view="llamadas">
+                    <i class="fa-solid fa-microphone"></i> Llamadas
+                </a>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="topbar glass-panel">
+                <div class="search-bar">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" placeholder="Buscar..." id="globalSearch">
+                </div>
+                <div class="user-profile">
+                    <div class="avatar">A</div>
+                    <span>Admin</span>
+                </div>
+            </header>
+
+            <!-- Dynamic Views Container -->
+            <div id="view-container" class="view-container">
+                <!-- views will be injected here by app.js -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Modals Container -->
+    <div id="modal-root"></div>
+
+    <!-- Scripts -->
+    <!-- Axios for API requests -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Chart.js for data visualization -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Application Logic -->
+    <script src="api.js"></script>
+    <script src="modals.js"></script>
+    <script src="charts.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
