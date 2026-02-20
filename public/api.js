@@ -186,6 +186,7 @@ const AppAPI = {
         try {
             // Simplify query to verify data presence. If this works, we can restore joins later.
             const res = await this.axiosInstance.get('/llamadas?select=*,candidatos(nombre,apellido),eventos(tipo_reunion)');
+            console.log(res.data);
             return res.data;
         } catch (e) {
             console.error("Error fetching llamadas:", e);

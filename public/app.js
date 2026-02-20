@@ -165,6 +165,7 @@ const App = {
 
     async renderLlamadas(container) {
         this.state.llamadas = await AppAPI.getLlamadas();
+        console.log("llamadas", this.state.llamadas);
 
         container.innerHTML = `
             <div class="view-header">

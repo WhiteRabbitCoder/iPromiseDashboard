@@ -17,15 +17,19 @@ const DashboardCharts = {
 
         // Group coders by status
         const statusCounts = {
-            pendiente: 0,
+            PENDIENTE: 0,
             agendado: 0,
             otro: 0
         };
 
+        // Ensure coders is an array
+        if (!Array.isArray(coders)) coders = [];
+
         coders.forEach(c => {
-            const st = (c.estado_gestion || 'nuevo').toLowerCase();
-            if (st === 'nuevo') statusCounts.pendiente++; // map nuevo to pendiente logically
-            else if (st !== 'rechazado') statusCounts.agendado++; // others in process
+            // Normalize to uppercase to match how the app stores/shows states
+            const st = String(c.estado_gestion || 'PENDIENTE').toUpperCase();
+            if (st === 'PENDIENTE') statusCounts.PENDIENTE++; // pending
+            else if (st !== 'RECHAZADO') statusCounts.agendado++; // others considered in-process/agendado
             else statusCounts.otro++;
         });
 
@@ -38,7 +42,7 @@ const DashboardCharts = {
             data: {
                 labels: ['Pendiente', 'Agendado', 'Otro'],
                 datasets: [{
-                    data: [statusCounts.pendiente, statusCounts.agendado, statusCounts.otro],
+                    data: [statusCounts.PENDIENTE, statusCounts.agendado, statusCounts.otro],
                     backgroundColor: [
                         'rgba(245, 158, 11, 0.8)', // Warning (Pendiente)
                         'rgba(16, 185, 129, 0.8)', // Success (Agendado)
