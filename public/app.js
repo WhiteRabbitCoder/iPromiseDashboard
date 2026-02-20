@@ -187,7 +187,7 @@ const App = {
                             </tr>
                         </thead>
                         <tbody>
-                            ${this.state.llamadas.length === 0 ? `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No hay llamadas registradas</td></tr>` :
+                            ${this.state.llamadas.length === 0 ? `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No hay llamadas registradas</td></tr>` :
                 this.state.llamadas.map(ll => `
                                 <tr>
                                     <td><strong>${ll.candidatos ? (ll.candidatos.nombre || '') + ' ' + (ll.candidatos.apellido || '') : 'Desconocido'}</strong></td>
@@ -211,13 +211,20 @@ const App = {
 
         try {
             const result = await AppAPI.triggerN8NWebhook();
+
+            // Check if response is actually the HTML of the dashboard (indicating incorrect URL)
+            if (typeof result === 'string' && result.includes('<!DOCTYPE html>')) {
+                alert("⚠️ Error: El servidor devolvió la página principal en lugar de ejecutar el webhook. Asegúrate de haber REINICIADO el servidor después de guardar el archivo .env.local.");
+                return;
+            }
+
             if (result && result.message === "Workflow was started") {
                 alert("🚀 " + result.message + ": ¡Las llamadas han comenzado!");
             } else {
-                alert("Webhook disparado con éxito: " + JSON.stringify(result));
+                alert("Respuesta del Webhook: " + (typeof result === 'object' ? JSON.stringify(result) : result));
             }
         } catch (e) {
-            alert("Error al disparar webhook. Revisa la consola.");
+            alert("❌ Errror: " + e.message);
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-play"></i> Iniciar Flujo de Llamadas (N8N)';

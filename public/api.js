@@ -18,6 +18,11 @@ const AppAPI = {
             this.anonKey = config.supabaseAnonKey;
             this.n8nWebhookUrl = config.n8nWebhookUrl;
 
+            console.log("Config loaded:", {
+                url: this.supabaseUrl,
+                webhook: this.n8nWebhookUrl ? "Configured" : "MISSING (Restart server!)"
+            });
+
             // Configure Axios instance
             this.axiosInstance = axios.create({
                 baseURL: `${this.supabaseUrl}/rest/v1`,
@@ -179,18 +184,27 @@ const AppAPI = {
 
     async getLlamadas() {
         try {
-            // Explicit joins for candidates and events
-            const res = await this.axiosInstance.get('/llamadas?select=*,candidatos!candidato_id(nombre,apellido),eventos!evento_asignado_id(tipo_reunion)');
+            // Simplify query to verify data presence. If this works, we can restore joins later.
+            const res = await this.axiosInstance.get('/llamadas?select=*,candidatos(nombre,apellido),eventos(tipo_reunion)');
             return res.data;
         } catch (e) {
             console.error("Error fetching llamadas:", e);
-            return [];
+            // Try fallback to just select=* if join fails
+            try {
+                const res = await this.axiosInstance.get('/llamadas?select=*');
+                return res.data;
+            } catch (e2) {
+                return [];
+            }
         }
     },
 
     // --- N8N WEBHOOK ---
     async triggerN8NWebhook() {
         try {
+            if (!this.n8nWebhookUrl) {
+                throw new Error("Webhook URL is not configured. Please check your .env.local and restart the server.");
+            }
             const res = await axios.get(this.n8nWebhookUrl);
             return res.data;
         } catch (e) {
