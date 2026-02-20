@@ -177,10 +177,10 @@ const AppAPI = {
         }
     },
 
-    // --- LLAMADAS ---
     async getLlamadas() {
         try {
-            const res = await this.axiosInstance.get('/llamadas?select=*,candidatos(nombre,apellido)');
+            // Explicit joins for candidates and events
+            const res = await this.axiosInstance.get('/llamadas?select=*,candidatos!candidato_id(nombre,apellido),eventos!evento_asignado_id(tipo_reunion)');
             return res.data;
         } catch (e) {
             console.error("Error fetching llamadas:", e);

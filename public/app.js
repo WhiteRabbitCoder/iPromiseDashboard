@@ -182,6 +182,7 @@ const App = {
                                 <th>Candidato</th>
                                 <th>Fecha/Hora</th>
                                 <th>Resultado</th>
+                                <th>Evento Asignado</th>
                                 <th>Resumen</th>
                             </tr>
                         </thead>
@@ -189,10 +190,11 @@ const App = {
                             ${this.state.llamadas.length === 0 ? `<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No hay llamadas registradas</td></tr>` :
                 this.state.llamadas.map(ll => `
                                 <tr>
-                                    <td><strong>${ll.candidatos ? (ll.candidatos.nombre + ' ' + ll.candidatos.apellido) : 'N/A'}</strong></td>
+                                    <td><strong>${ll.candidatos ? (ll.candidatos.nombre || '') + ' ' + (ll.candidatos.apellido || '') : 'Desconocido'}</strong></td>
                                     <td>${ll.fecha_hora_llamada ? new Date(ll.fecha_hora_llamada).toLocaleString() : 'N/A'}</td>
                                     <td><span class="badge ${ll.resultado === 'exitoso' ? 'agendado' : 'pendiente'}">${ll.resultado || 'Pendiente'}</span></td>
-                                    <td style="max-width:300px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${ll.resumen || ''}">${ll.resumen || 'Sin resumen'}</td>
+                                    <td><span style="font-size: 0.85em; color: var(--text-muted);">${ll.eventos ? ll.eventos.tipo_reunion : 'Ninguno'}</span></td>
+                                    <td style="max-width:250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${ll.resumen || ''}">${ll.resumen || 'Sin resumen'}</td>
                                 </tr>
                             `).join('')}
                         </tbody>

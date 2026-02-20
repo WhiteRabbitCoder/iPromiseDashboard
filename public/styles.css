@@ -458,7 +458,8 @@ tbody tr:hover {
     /* Deep tint */
     border: 1px solid var(--glass-border);
     border-radius: 24px;
-    /* MORE ROUNDED MODAL REQUEST */
+    padding: 32px;
+    /* ADDED PADDING REQUEST */
     transform: translateY(20px);
     transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
