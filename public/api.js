@@ -5,7 +5,6 @@
 const AppAPI = {
     supabaseUrl: '',
     anonKey: '',
-    n8nWebhookUrl: '',
     axiosInstance: null,
 
     async init() {
@@ -16,12 +15,8 @@ const AppAPI = {
 
             this.supabaseUrl = config.supabaseUrl;
             this.anonKey = config.supabaseAnonKey;
-            this.n8nWebhookUrl = config.n8nWebhookUrl;
 
-            console.log("Config loaded:", {
-                url: this.supabaseUrl,
-                webhook: this.n8nWebhookUrl ? "Configured" : "MISSING (Restart server!)"
-            });
+            console.log("Config loaded:", { url: this.supabaseUrl });
 
             // Configure Axios instance
             this.axiosInstance = axios.create({
@@ -184,16 +179,27 @@ const AppAPI = {
 
     async getLlamadas() {
         try {
-            // Simplify query to verify data presence. If this works, we can restore joins later.
             const res = await this.axiosInstance.get('/llamadas?select=*,candidatos(nombre,apellido),eventos(tipo_reunion)');
             return res.data;
         } catch (e) {
-            console.error("Error fetching llamadas:", e);
-            // Try fallback to just select=* if join fails
+            console.error("Error fetching llamadas with joins:", e.response?.data || e.message);
+            // Fallback: fetch plain data and enrich manually with separate requests
             try {
-                const res = await this.axiosInstance.get('/llamadas?select=*');
-                return res.data;
+                const [llamadasRes, candidatosRes, eventosRes] = await Promise.all([
+                    this.axiosInstance.get('/llamadas?select=*'),
+                    this.axiosInstance.get('/candidatos?select=id,nombre,apellido').catch(() => ({ data: [] })),
+                    this.axiosInstance.get('/eventos?select=id,tipo_reunion').catch(() => ({ data: [] }))
+                ]);
+                const candidatosMap = Object.fromEntries(candidatosRes.data.map(c => [c.id, c]));
+                const eventosMap = Object.fromEntries(eventosRes.data.map(ev => [ev.id, ev]));
+                return llamadasRes.data.map(ll => ({
+                    ...ll,
+                    // Support common FK column name patterns
+                    candidatos: candidatosMap[ll.candidato_id] || candidatosMap[ll.id_candidato] || null,
+                    eventos: eventosMap[ll.evento_id] || eventosMap[ll.id_evento] || null
+                }));
             } catch (e2) {
+                console.error("Error in llamadas fallback:", e2);
                 return [];
             }
         }
@@ -202,10 +208,8 @@ const AppAPI = {
     // --- N8N WEBHOOK ---
     async triggerN8NWebhook() {
         try {
-            if (!this.n8nWebhookUrl) {
-                throw new Error("Webhook URL is not configured. Please check your .env.local and restart the server.");
-            }
-            const res = await axios.get(this.n8nWebhookUrl);
+            // Call the server-side proxy to avoid browser CORS restrictions
+            const res = await axios.post('/api/trigger-flow');
             return res.data;
         } catch (e) {
             console.error("Error triggering webhook:", e);

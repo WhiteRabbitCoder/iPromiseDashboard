@@ -212,19 +212,14 @@ const App = {
         try {
             const result = await AppAPI.triggerN8NWebhook();
 
-            // Check if response is actually the HTML of the dashboard (indicating incorrect URL)
-            if (typeof result === 'string' && result.includes('<!DOCTYPE html>')) {
-                alert("⚠️ Error: El servidor devolvió la página principal en lugar de ejecutar el webhook. Asegúrate de haber REINICIADO el servidor después de guardar el archivo .env.local.");
-                return;
-            }
-
             if (result && result.message === "Workflow was started") {
                 alert("🚀 " + result.message + ": ¡Las llamadas han comenzado!");
             } else {
                 alert("Respuesta del Webhook: " + (typeof result === 'object' ? JSON.stringify(result) : result));
             }
         } catch (e) {
-            alert("❌ Errror: " + e.message);
+            const msg = e.response?.data?.error || e.message;
+            alert("❌ Error: " + msg);
         } finally {
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-play"></i> Iniciar Flujo de Llamadas (N8N)';
