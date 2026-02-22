@@ -82,8 +82,17 @@ export const ModalSystem = {
             }
         };
 
-        content.appendChild(header);
-        content.appendChild(form);
+        if (config.hideFooter) {
+            content.appendChild(header);
+            const body = document.createElement('div');
+            body.style.padding = '20px';
+            body.innerHTML = config.content;
+            content.appendChild(body);
+        } else {
+            content.appendChild(header);
+            content.appendChild(form);
+        }
+
         overlay.appendChild(content);
 
         document.getElementById('modal-root').appendChild(overlay);

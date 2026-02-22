@@ -205,5 +205,9 @@ export const AppAPI = {
             console.error("Error triggering webhook:", e);
             throw e;
         }
+    },
+
+    getCallAudioUrl(conversationId) {
+        return `/.netlify/functions/get-call-audio?conversation_id=${conversationId}`;
     }
 };

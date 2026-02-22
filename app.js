@@ -188,10 +188,11 @@ export const App = {
                                 <th>Resultado</th>
                                 <th>Evento Asignado</th>
                                 <th>Resumen</th>
+                                <th>Grabación</th>
                             </tr>
                         </thead>
                         <tbody>
-                            ${this.state.llamadas.length === 0 ? `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">No hay llamadas registradas</td></tr>` :
+                            ${this.state.llamadas.length === 0 ? `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">No hay llamadas registradas</td></tr>` :
                 this.state.llamadas.map(ll => `
                                 <tr>
                                     <td><strong>${ll.candidatos ? (ll.candidatos.nombre || '') + ' ' + (ll.candidatos.apellido || '') : 'Desconocido'}</strong></td>
@@ -199,6 +200,13 @@ export const App = {
                                     <td><span class="badge ${ll.resultado === 'exitoso' ? 'agendado' : 'pendiente'}">${ll.resultado || 'Pendiente'}</span></td>
                                     <td><span style="font-size: 0.85em; color: var(--text-muted);">${ll.eventos ? ll.eventos.tipo_reunion : 'Ninguno'}</span></td>
                                     <td style="max-width:250px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${ll.resumen || ''}">${ll.resumen || 'Sin resumen'}</td>
+                                    <td>
+                                        ${ll.conversation_id ? `
+                                            <button class="icon-btn edit" onclick="App.playAudio('${ll.conversation_id}')" title="Escuchar">
+                                                <i class="fa-solid fa-volume-high"></i>
+                                            </button>
+                                        ` : '<span style="color:var(--text-muted)">N/A</span>'}
+                                    </td>
                                 </tr>
                             `).join('')}
                         </tbody>
@@ -206,6 +214,28 @@ export const App = {
                 </div>
             </div>
         `;
+    },
+
+    playAudio(conversationId) {
+        const audioUrl = AppAPI.getCallAudioUrl(conversationId);
+        ModalSystem.show({
+            title: 'Grabación de la Llamada',
+            hideFooter: true,
+            content: `
+                <div style="text-align: center; padding: 10px 0;">
+                    <p style="margin-bottom: 20px; color: var(--text-muted);">ID: ${conversationId}</p>
+                    <audio controls autoplay style="width: 100%;">
+                        <source src="${audioUrl}" type="audio/mpeg">
+                        Tu navegador no soporta la reproducción de audio.
+                    </audio>
+                    <div style="margin-top: 20px;">
+                        <a href="${audioUrl}" download class="btn" style="display: inline-block;">
+                            <i class="fa-solid fa-download"></i> Descargar MP3
+                        </a>
+                    </div>
+                </div>
+            `
+        });
     },
 
     async triggerWebhook() {
