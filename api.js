@@ -1,26 +1,19 @@
 /**
  * api.js - Centralized Supabase API client
  */
+import axios from 'axios';
 
-const AppAPI = {
-    supabaseUrl: '',
-    anonKey: '',
-    n8nWebhookUrl: '',
+export const AppAPI = {
+    supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
+    anonKey: import.meta.env.VITE_SUPABASE_ANON_KEY,
+    n8nWebhookUrl: import.meta.env.VITE_N8N_WEBHOOK_URL,
     axiosInstance: null,
 
     async init() {
         try {
-            // Fetch config securely from our backend 
-            const response = await fetch('/api/config');
-            const config = await response.json();
-
-            this.supabaseUrl = config.supabaseUrl;
-            this.anonKey = config.supabaseAnonKey;
-            this.n8nWebhookUrl = config.n8nWebhookUrl;
-
-            console.log("Config loaded:", {
+            console.log("Config loaded from env:", {
                 url: this.supabaseUrl,
-                webhook: this.n8nWebhookUrl ? "Configured" : "MISSING (Restart server!)"
+                webhook: this.n8nWebhookUrl ? "Configured" : "MISSING"
             });
 
             // Configure Axios instance
@@ -36,7 +29,7 @@ const AppAPI = {
             console.log("API initialized successfully");
         } catch (error) {
             console.error("Failed to initialize API:", error);
-            alert("No se pudo conectar al servidor para obtener las credenciales.");
+            alert("No se pudo inicializar la API. Verifica las variables de entorno.");
         }
     },
 

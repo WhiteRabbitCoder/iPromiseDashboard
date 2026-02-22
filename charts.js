@@ -1,8 +1,9 @@
 /**
  * charts.js - Chart.js integrations for Dashboard Insights
  */
+import { Chart } from 'chart.js';
 
-const DashboardCharts = {
+export const DashboardCharts = {
     codersStatusChart: null,
     callsChart: null,
 

@@ -2,7 +2,7 @@
  * modals.js - Dynamic Modal System
  */
 
-const ModalSystem = {
+export const ModalSystem = {
     overlayClass: 'modal-overlay',
     contentClass: 'modal-content',
 

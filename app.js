@@ -1,8 +1,11 @@
 /**
  * app.js - Main Application Logic
  */
+import { AppAPI } from './api.js';
+import { ModalSystem } from './modals.js';
+import { DashboardCharts } from './charts.js';
 
-const App = {
+export const App = {
     state: {
         currentView: 'dashboard',
         coders: [],
@@ -519,8 +522,3 @@ const App = {
     }
 
 };
-
-// Bootstrap application when DOM is ready
-document.addEventListener('DOMContentLoaded', () => {
-    App.init();
-});
